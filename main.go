@@ -3,7 +3,8 @@ package main
 import (
 	"os"
 
-	"gopkg.in/alecthomas/kingpin.v2"
+	//"gopkg.in/alecthomas/kingpin.v2",
+	"github.com/alecthomas/kingpin"
 )
 
 var (
@@ -17,24 +18,26 @@ var (
 	suggest = app.Command("suggest", "Show what the suggested output of the transformation would look like.")
 	convert = app.Command("convert", "Take input and run ffmpeg to generate an optimal mp4 file")
 	check   = app.Command("check", "log information about ffprobe and ffmpeg")
+	folder  = app.Command("folder", "Convert entire folder to optimal mp4 file")
 )
 
 func main() {
-	var ()
-
-	kingpin.Version("0.0.7")
+	kingpin.Version("0.0.8")
 	app.UsageTemplate(kingpin.SeparateOptionalFlagsUsageTemplate)
 
 	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
 
 	case show.FullCommand():
-		showFFprobeInfo((*input))
+		showFFprobeInfo(*input)
 
 	case suggest.FullCommand():
-		suggestConvSettings((*input))
+		suggestConvSettings(*input)
 
 	case convert.FullCommand():
-		convertSource((*input), (*output))
+		convertSource(*input, *output)
+
+	case folder.FullCommand():
+		convertSource(*input, *output)
 
 	case check.FullCommand():
 		checkVersion()
