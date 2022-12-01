@@ -1,18 +1,18 @@
 package main
 
 import (
-	"os"
-
-	//"gopkg.in/alecthomas/kingpin.v2",
 	"github.com/alecthomas/kingpin"
+	"os"
 )
 
 var (
-	app    = kingpin.New("mkv2Appletv", "Convert as efficiently as possible media to AppleTV mp4 format.")
-	debug  = app.Flag("debug", "Enable debug mode.").Short('d').Bool()
-	try    = app.Flag("try", "When set to true only the first 10 seconds of conversion will be done").Short('t').Bool()
-	input  = app.Flag("input", "Location of input File").Short('i').Required().ExistingFile()
-	output = app.Flag("output", "Location of output mp4 File (not required, if not set output file name will be input filename +.mp4)").Short('o').String()
+	app   = kingpin.New("mkv2Appletv", "Convert as efficiently as possible media to AppleTV mp4 format.")
+	debug = app.Flag("debug", "Enable debug mode.").Short('d').Bool()
+	try   = app.Flag(
+		"try", "When set to true only the first 10 seconds of conversion will be done").Short('t').Bool()
+	input  = app.Flag("input", "Location of input File").Short('i').Required().ExistingFileOrDir()
+	output = app.Flag("output", "Location of output mp4 File (not required, if not set output file name will"+
+		" be input filename +.mp4)").Short('o').String()
 
 	show    = app.Command("show", "Using ffprobe show relavant information about a input file")
 	suggest = app.Command("suggest", "Show what the suggested output of the transformation would look like.")
@@ -37,8 +37,8 @@ func main() {
 		convertSource(*input, *output)
 
 	case folder.FullCommand():
-		convertSource(*input, *output)
-
+		//handleFolderConversion(*input)
+		handleFolderConversion("/Users/john/Movies/Test/")
 	case check.FullCommand():
 		checkVersion()
 	}

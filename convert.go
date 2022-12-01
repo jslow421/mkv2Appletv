@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/fs"
+	"path/filepath"
 )
 
 var (
@@ -42,6 +44,12 @@ func (buff *ffmpegOut) genVideoConversion() error {
 
 		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "-level")
 		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "4.0")
+
+		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "-analyzeduration")
+		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "2147483647")
+
+		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "-probesize")
+		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "2147483647")
 
 	default:
 		err := errors.New("unknown or not set Video settings")
@@ -104,7 +112,7 @@ func (buff *ffmpegOut) genAudioConversion() error {
 
 	switch media.outAudio1 {
 	case "copy":
-		// This situation is when we have an ac3 codec and we have to generate the aac codec
+		// This situation is when we have an ac3 codec, and we have to generate the aac codec
 		map1 := fmt.Sprintf("0:%d", media.masterAudioStream.Index)
 		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "-map", map1, "-c:a:1", "copy")
 	case "convert":
@@ -189,6 +197,35 @@ func convertSource(in string, output string) {
 	_, err = callFFmpeg(ffmpegCmd)
 	if err != nil {
 		fmt.Printf("Error executing ffmpeg call\n")
+	}
+
+}
+
+func findAllMp4FilePaths(path string, extension string) (files []string) {
+	var a []string
+	filepath.WalkDir(path, func(s string, d fs.DirEntry, e error) error {
+		if e != nil {
+			return e
+		}
+		if filepath.Ext(d.Name()) == extension {
+			a = append(a, s)
+		}
+		return nil
+	})
+
+	return a
+}
+
+func handleFolderConversion(input string) {
+	fmt.Println("Got to the handler")
+	var files []string
+
+	for _, s := range findAllMp4FilePaths(input, ".mkv") {
+		files = append(files, s)
+	}
+
+	for _, f := range files {
+		convertSource(f, "")
 	}
 
 }

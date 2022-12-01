@@ -18,9 +18,9 @@ func checkVersion() {
 		fmt.Println("Unable to find ffmpeg in your path")
 	} else {
 		// Find out what version of ffmpeg that is installed
-		Findversion := regexp.MustCompile(`ffmpeg.version.[3-4]`)
-    version := Findversion.FindString( string(out[:30] ) )
-		re := regexp.MustCompile("ffmpeg.version [3-4]")
+		Findversion := regexp.MustCompile(`ffmpeg.version.[3-5]`)
+		version := Findversion.FindString(string(out[:30]))
+		re := regexp.MustCompile("ffmpeg.version [3-5]")
 
 		bFound := re.MatchString(string(out[:30]))
 		if bFound == false {
@@ -68,9 +68,9 @@ func checkFFmpegVersion() error {
 		fmt.Println(err)
 	} else {
 		// Find out what version of ffmpeg that is installed
-		FindVersion := regexp.MustCompile(`ffmpeg.version.[3-4]`)
-    version := FindVersion.FindString( string(out[:30] ) )
-		re := regexp.MustCompile("ffmpeg.version [3-4]")
+		FindVersion := regexp.MustCompile(`ffmpeg.version.[3-5]`)
+		version := FindVersion.FindString(string(out[:30]))
+		re := regexp.MustCompile("ffmpeg.version [3-5]")
 
 		bFound := re.MatchString(string(out[:30]))
 		if bFound == false {
