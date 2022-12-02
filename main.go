@@ -38,7 +38,7 @@ func main() {
 
 	case folder.FullCommand():
 		//handleFolderConversion(*input)
-		handleFolderConversion("/Users/john/Movies/Test/")
+		handleFolderConversion(*input, *output)
 	case check.FullCommand():
 		checkVersion()
 	}

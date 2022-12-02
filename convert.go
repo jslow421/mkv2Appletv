@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 	"path/filepath"
+	"strings"
 )
 
 var (
@@ -45,12 +46,6 @@ func (buff *ffmpegOut) genVideoConversion() error {
 		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "-level")
 		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "4.0")
 
-		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "-analyzeduration")
-		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "2147483647")
-
-		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "-probesize")
-		ffmpegCmd.ffArgs = append(ffmpegCmd.ffArgs, "2147483647")
-
 	default:
 		err := errors.New("unknown or not set Video settings")
 		return err
@@ -61,7 +56,7 @@ func (buff *ffmpegOut) genVideoConversion() error {
 func (buff *ffmpegOut) genAudioConversion() error {
 
 	//
-	// This is the best case senerio.  We have an aac and an ac3 stream
+	// This is the best case scenario.  We have an aac and an ac3 stream
 	//
 	if media.outAudio0 == "copy" && media.outAudio1 == "copy" {
 		map0 := fmt.Sprintf("0:%d", media.aacAudioStream.Index)
@@ -123,6 +118,7 @@ func (buff *ffmpegOut) genAudioConversion() error {
 
 	} // end of switch
 	return err
+
 }
 func (buff *ffmpegOut) setupHeader() {
 
@@ -188,17 +184,10 @@ func convertSource(in string, output string) {
 		return
 	}
 
-	// debug to dump the entire structure
-	//	color.Blue("\n\nType: %T\n%#v\n\n", ffmpegCmd.ffArgs, ffmpegCmd.ffArgs)
-	// for i := 0; i < len(ffmpegCmd.ffArgs); i++ {
-	// 	fmt.Printf("%s\n", ffmpegCmd.ffArgs[i])
-	// }
-
 	_, err = callFFmpeg(ffmpegCmd)
 	if err != nil {
 		fmt.Printf("Error executing ffmpeg call\n")
 	}
-
 }
 
 func findAllMp4FilePaths(path string, extension string) (files []string) {
@@ -216,8 +205,7 @@ func findAllMp4FilePaths(path string, extension string) (files []string) {
 	return a
 }
 
-func handleFolderConversion(input string) {
-	fmt.Println("Got to the handler")
+func handleFolderConversion(input string, output string) {
 	var files []string
 
 	for _, s := range findAllMp4FilePaths(input, ".mkv") {
@@ -225,7 +213,10 @@ func handleFolderConversion(input string) {
 	}
 
 	for _, f := range files {
-		convertSource(f, "")
+		filename := strings.Split(f, "/")
+		figuredFileName := filename[len(filename)-1] + ".mp4"
+		figuredFileName = strings.ReplaceAll(figuredFileName, ".mkv", "")
+		convertSource(f, output+figuredFileName)
+		ffmpegCmd = new(ffmpegOut)
 	}
-
 }
