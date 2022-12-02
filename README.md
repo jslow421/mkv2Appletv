@@ -45,7 +45,9 @@ Commands:
 
   convert
     Take input and run ffmpeg to generate an optimal mp4 file
-
+    
+  folder
+    Take input and run ffmpeg on every mkv in folder (including subfolders) to generate an optimal mp4 file
 
   check
     log information about ffprobe and ffmpeg
