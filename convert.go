@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -205,6 +206,13 @@ func findAllMp4FilePaths(path string, extension string) (files []string) {
 	return a
 }
 
+func createNestedDirectories(outputDir string) {
+	err := os.MkdirAll(outputDir, os.ModePerm)
+	if err != nil {
+		fmt.Println("Error creating output directory")
+	}
+}
+
 func handleFolderConversion(input string, output string) {
 	var files []string
 
@@ -215,8 +223,13 @@ func handleFolderConversion(input string, output string) {
 	for _, f := range files {
 		filename := strings.Split(f, "/")
 		figuredFileName := filename[len(filename)-1] + ".mp4"
+		newOutput := strings.ReplaceAll(f, input, "")
+		newOutput = strings.ReplaceAll(newOutput, filename[len(filename)-1], "")
 		figuredFileName = strings.ReplaceAll(figuredFileName, ".mkv", "")
-		convertSource(f, output+figuredFileName)
+
+		createNestedDirectories(output + newOutput)
+
+		convertSource(f, output+newOutput+"/"+figuredFileName)
 		ffmpegCmd = new(ffmpegOut)
 	}
 }
