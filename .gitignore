@@ -2,3 +2,5 @@ mkv2Appletv
 ffmpeg*.log
 
 out/
+
+.DS_Store
