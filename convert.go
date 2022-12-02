@@ -207,9 +207,11 @@ func findAllMp4FilePaths(path string, extension string) (files []string) {
 }
 
 func createNestedDirectories(outputDir string) {
-	err := os.MkdirAll(outputDir, os.ModePerm)
-	if err != nil {
-		fmt.Println("Error creating output directory")
+	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
+		err := os.MkdirAll(outputDir, os.ModePerm)
+		if err != nil {
+			fmt.Println("Error creating output directory")
+		}
 	}
 }
 
